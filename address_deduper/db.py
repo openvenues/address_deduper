@@ -20,10 +20,10 @@ def db_from_config(config):
         return NopStorage()
     elif storage_type == storage_types.LEVELDB:
         import address_normalizer.deduping.storage.level as level
-        db_dir = cleaned_db_dir(config)
+        db_dir = cleanup_db_dir(config)
         return level.LevelDBNearDupeStorage(level.LevelDB(db_dir))
     elif storage_type == storage_types.ROCKSDB:
         import address_normalizer.deduping.storage.rocks as rocks
         import rocksdb
-        db_dir = cleaned_db_dir(config)
+        db_dir = cleanup_db_dir(config)
         return rocks.RocksDBNearDupeStorage(rocksdb.RocksDB(db_dir, rocksdb.Options(create_if_missing=True)))
