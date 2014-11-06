@@ -1,0 +1,5 @@
+Flask
+Flask-Script
+gevent
+ujson
+git+https://github.com/openvenues/address_normalizer.git
