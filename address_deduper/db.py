@@ -11,7 +11,7 @@ def db_from_config(config):
     elif storage_type == storage_types.LEVELDB:
         import address_normalizer.deduping.storage.level as level
         db_dir = config['STORAGE_LEVELDB_DIR']
-        if config.get('CLEAN_DB_ON_START', False):
+        if config.get('CLEAN_DB_ON_START', False) and os.path.exists(db_dir):
             shutil.rmtree(db_dir)
         else:
             os.unlink(os.path.join(db_dir, 'LOCK'))
@@ -20,7 +20,7 @@ def db_from_config(config):
     elif storage_type == storage_types.ROCKSDB:
         import address_normalizer.deduping.storage.rocks as rocks
         db_dir = config['STORAGE_ROCKSDB_DIR']
-        if config.get('CLEAN_DB_ON_START', False):
+        if config.get('CLEAN_DB_ON_START', False) and os.path.exists(db_dir):
             shutil.rmtree(db_dir)
         else:
             os.unlink(os.path.join(db_dir, 'LOCK'))
