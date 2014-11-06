@@ -1,4 +1,4 @@
-from address_normalizer.views.base import *
+from address_deduper.views.base import *
 
 from address_normalizer.deduping.near_duplicates import *
 

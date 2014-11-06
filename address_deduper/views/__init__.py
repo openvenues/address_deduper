@@ -1,6 +1,6 @@
 import pkgutil
 
-from address_normalizer.views.base import *
+from address_deduper.views.base import *
 
 for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):
     module = loader.find_module(module_name).load_module(module_name)
