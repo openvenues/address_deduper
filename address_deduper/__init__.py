@@ -1,10 +1,10 @@
 from flask import Flask
 
-import .config
-from .db import db_from_config
+import config
+from db import db_from_config
 
 from address_deduper.views import init_views
-from address_normalizer.
+from address_normalizer.deduping.near_duplicates import *
 
 def create_app(env, **kw):
     app = Flask(__name__)
