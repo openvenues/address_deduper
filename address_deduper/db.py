@@ -3,7 +3,7 @@ import shutil
 
 from address_normalizer.deduping.storage.base import *
 
-def cleanup_db_dir(db_dir):
+def cleanup_db_dir(db_dir, config):
     if config.get('CLEAN_DB_ON_START', False) and os.path.exists(db_dir):
         shutil.rmtree(db_dir)
     else:
@@ -19,11 +19,11 @@ def db_from_config(config):
     elif storage_type == storage_types.LEVELDB:
         import address_normalizer.deduping.storage.level as level
         db_dir = config['STORAGE_LEVELDB_DIR']
-        cleanup_db_dir(db_dir)
+        cleanup_db_dir(db_dir, config)
         return level.LevelDBNearDupeStorage(level.LevelDB(db_dir))
     elif storage_type == storage_types.ROCKSDB:
         import address_normalizer.deduping.storage.rocks as rocks
         import rocksdb
         db_dir = config['STORAGE_ROCKSDB_DIR']
-        cleanup_db_dir(db_dir)
+        cleanup_db_dir(db_dir, config)
         return rocks.RocksDBNearDupeStorage(rocksdb.RocksDB(db_dir, rocksdb.Options(create_if_missing=True)))
