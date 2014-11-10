@@ -21,7 +21,7 @@ def create_app(env, **kw):
     app.url_map.strict_slashes = False
 
     db = db_from_config(app.config)
-    AddressNearDupe.configure(db)
+    AddressNearDupe.configure(db, geohash_precision=app.config['GEOHASH_PRECISION'])
     init_views(app)
    
     return app

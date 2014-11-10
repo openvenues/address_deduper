@@ -28,6 +28,15 @@ class BaseConfig(object):
     LOG_BACKUPS = 3
     LOG_ROLLOVER_INTERVAL = 'midnight'
 
+    '''
+    Number of characters of the geohash to use in deduping for lat/longs
+    Higher = more precise, lower = more forgiving
+    Geohashes has the property that if two hashes share a common prefix of at least n characters, they are within a certain distance of each other
+    The prefix width can be thought of as a bounding box with a width and a height defining what is considered "nearby". For the distance table, see: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-geohashgrid-aggregation.html
+    Since we use the 8 neighbor tiles as well (to avoid missing locations that are close to each other simply because they are across a faultline), multiply those numbers by 3 to cover the full 9-tile span for which lat/longs can match
+    '''
+    GEOHASH_PRECISION = 5
+
     STORAGE = storage_types.LEVELDB
 
     STORAGE_LEVELDB_DIR = '/tmp/dupes'
