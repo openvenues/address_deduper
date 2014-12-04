@@ -65,7 +65,12 @@ class AddressView(BaseView):
         return_val = {}
         if existence:
             _, (guid, dupe) = existence[0]
-            return jsonify({'guid': guid, 'dupe': dupe})
+            response = {'guid': guid, 'dupe': dupe}
+            if 'debug' in request.values:
+                existing_address = AddressNearDupe.storage.get(guid)
+                if existing_address:
+                    response['existing'] = json.loads(existing_address)
+            return jsonify(response)
         else:
             abort(500, 'Unknown error')
 
@@ -74,4 +79,12 @@ class AddressView(BaseView):
     def dedupe(cls):
         addresses = cls.addresses_from_json()
         created = AddressNearDupe.check(addresses, add=True)
-        return jsonify({'addresses': [{'guid': guid, 'dupe': dupe} for _, (guid, dupe) in created]})
+        response = [{'guid': guid, 'dupe': dupe} for _, (guid, dupe) in created]
+        if 'debug' in request.values:
+            guids = [guid for _, (guid, dupe) in created if dupe]
+            existing_addresses = AddressNearDupe.storage.multiget(guids)
+            for r in response:
+                existing_address = existing_addresses.get(r['guid'])
+                if existing_address:
+                    r['existing'] = json.loads(existing_address)
+        return jsonify({'addresses': response})
