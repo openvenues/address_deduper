@@ -69,6 +69,7 @@ class AddressView(BaseView):
             if 'debug' in request.values and dupe:
                 existing_address = AddressNearDupe.storage.get(guid)
                 if existing_address:
+                    response['object'] = dict(address)
                     response['existing'] = json.loads(existing_address)
             return jsonify(response)
         else:
@@ -83,8 +84,9 @@ class AddressView(BaseView):
         if 'debug' in request.values:
             guids = [guid for _, (guid, dupe) in created if dupe]
             existing_addresses = AddressNearDupe.storage.multiget(guids)
-            for r in response:
+            for i, r in enumerate(response):
                 existing_address = existing_addresses.get(r['guid'])
                 if existing_address and r['dupe']:
+                    r['object'] = dict(addresses[i])
                     r['existing'] = json.loads(existing_address)
         return jsonify({'addresses': response})
