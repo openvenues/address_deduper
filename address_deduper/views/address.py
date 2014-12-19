@@ -80,13 +80,15 @@ class AddressView(BaseView):
     def dedupe(cls):
         addresses = cls.addresses_from_json()
         created = AddressNearDupe.check(addresses, add=True)
+        obj_dict = {a.guid: a for a in addresses}
         response = [{'guid': guid, 'dupe': dupe} for _, (guid, dupe) in created]
         if 'debug' in request.values:
             guids = [guid for _, (guid, dupe) in created if dupe]
-            existing_addresses = AddressNearDupe.storage.multiget(guids)
+            existing_addresses = {guid: a if not a else json.loads(a) for guid, a in AddressNearDupe.storage.multiget(guids).iteritems()}
             for i, r in enumerate(response):
-                existing_address = existing_addresses.get(r['guid'])
-                if existing_address and r['dupe']:
+                if r['dupe']:
+                    guid = r['guid']
+                    existing_address = existing_addresses[guid] or dict(obj_dict[guid])
                     r['object'] = dict(addresses[i])
-                    r['existing'] = json.loads(existing_address)
+                    r['existing'] = existing_address
         return jsonify({'addresses': response})
