@@ -1,4 +1,5 @@
 import logging
+import os
 
 from address_normalizer.deduping.storage.base import *
 
@@ -6,11 +7,24 @@ valid_configs = {}
 
 MB = 1024 * 1024
 
+APP_NAME = 'DEDUPER'
+
 class ConfigMeta(type):
     def __init__(cls, name, bases, dict_):
         if name != 'BaseConfig':
             assert hasattr(cls, 'env'), 'Config class %s has no attribute "env"' % name
             valid_configs[cls.env] = cls
+        else:
+            '''For environment variables, specify DEDUPER_{VAR_NAME}={VALUE}
+            The prefix is to avoid conflicts with existing environment variables.
+            N.B. This only works with string config variables like paths, etc. Can
+            also specify DEDUPER_STORAGE={LEVELDB|ROCKSDB}'''
+            for name in dict_.iterkeys():
+                if not name.startswith('_'):
+                    env_var = os.environ.get(u'_'.join([APP_NAME, name]), None)
+                    if env_var is not None:
+                        setattr(cls, name, env_var)
+
         super(ConfigMeta, cls).__init__(name, bases, dict_)
 
 

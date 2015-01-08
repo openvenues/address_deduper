@@ -9,10 +9,12 @@ def cleanup_db_dir(db_dir, config):
     else:
         lock_path = os.path.join(db_dir, 'LOCK')
         if os.path.exists(lock_path):
-            os.unlink()
+            os.unlink(lock_path)
 
 def db_from_config(config):
     storage_type = config.get('STORAGE', storage_types.NOP)
+    if isinstance(storage_type, basestring):
+        storage_type = storage_types.from_string(storage_type)
 
     if storage_type == storage_types.NOP:
         return NopStorage()
