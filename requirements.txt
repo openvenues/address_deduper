@@ -1,5 +1,5 @@
 Flask==0.10.1
 Flask-Script==2.0.5
-gevent==1.0.1
+gevent==1.0.2
 ujson==1.33
 git+https://github.com/openvenues/address_normalizer.git
